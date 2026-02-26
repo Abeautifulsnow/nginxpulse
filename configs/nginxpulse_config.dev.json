@@ -22,6 +22,31 @@
       "name": "神奇的程序员",
       "logPath": "var/log/kaisir/access.log",
       "domains": ["kaisir.cn","www.kaisir.cn"]
+    },
+    {
+      "name": "sftp站点",
+      "logPath": "",
+      "domains": [
+        "kaisir.cn"
+      ],
+      "logType": "nginx",
+      "logFormat": "",
+      "logRegex": "",
+      "timeLayout": "",
+      "sources": [
+        {
+          "id": "sftp-main",
+          "type": "sftp",
+          "pollInterval": "5s",
+          "path": "/home/likai/web-services/nginx_data/logs/kaisir/access.log",
+          "host": "192.168.6.131",
+          "port": 22,
+          "user": "root",
+          "auth": {
+            "keyFile": "/Users/likai/.ssh/nginxpulse_sftp"
+          }
+        }
+      ]
     }
   ],
   "system": {
