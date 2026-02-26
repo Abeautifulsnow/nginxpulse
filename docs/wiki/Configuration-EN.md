@@ -98,8 +98,8 @@ https://example.com/m/?tabbarBottom=false
 ### websites[]
 - `name` (string, required): site name. ID is derived from this.
 - `logPath` (string, required): log path, supports `*` glob.
-- `domains` (string[]): domain list.
-- `logType` (string): `nginx`, `caddy`, `nginx-proxy-manager` (`npm`), `apache` (`httpd`), `iis` (`iis-w3c`), `haproxy`, `traefik`, `envoy`, `tengine`, `nginx-ingress` (`ingress-nginx`), `traefik-ingress`, or `haproxy-ingress`, default `nginx`.
+- `domains` (string[]): domain list. This field is used by the system to determine whether traffic is internal (same-site access).
+- `logType` (string): `nginx`, `caddy`, `nginx-proxy-manager` (`npm`), `apache` (`httpd`), `iis` (`iis-w3c`), `haproxy`, `traefik`, `envoy`, `tengine`, `nginx-ingress` (`ingress-nginx`), `traefik-ingress`, `haproxy-ingress`, or `safeline` (`safeline-waf`/`raywaf`/`ray-waf`/`leichi`/`leichi-waf`), default `nginx`.
 - `logFormat` (string): custom format with `$vars`.
 - `logRegex` (string): custom regex with named groups.
 - `timeLayout` (string): custom time layout.

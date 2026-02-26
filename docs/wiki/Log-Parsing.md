@@ -65,26 +65,26 @@ NginxPulse 现已支持 `logType=iis`（别名：`iis-w3c`），默认按 IIS W3
 参考示例：
 ```yaml
 environment:
-  WEBSITES: '[{"name":"网站1","logPath":"/share/log/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"网站2","logPath":"/share/log/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
+  WEBSITES: '[{"name":"网站1","logPath":"/share/logs/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"网站2","logPath":"/share/logs/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
 volumes:
-  - ./nginx_data/logs/site1/access.log:/share/log/nginx/access-site1.log:ro
-  - ./nginx_data/logs/site2/access.log:/share/log/nginx/access-site2.log:ro
+  - ./nginx_data/logs/site1/access.log:/share/logs/nginx/access-site1.log:ro
+  - ./nginx_data/logs/site2/access.log:/share/logs/nginx/access-site2.log:ro
 ```
 
 如果站点很多，一个个挂载较繁琐，可以**直接挂载整个日志目录**，再在 `WEBSITES` 里指定具体文件：
 ```yaml
 environment:
-  WEBSITES: '[{"name":"网站1","logPath":"/share/log/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"网站2","logPath":"/share/log/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
+  WEBSITES: '[{"name":"网站1","logPath":"/share/logs/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"网站2","logPath":"/share/logs/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
 volumes:
-  - ./nginx_data/logs:/share/log/nginx/
+  - ./nginx_data/logs:/share/logs/nginx/
 ```
 
-> 注意：如果 Nginx 日志按天切割，可用 `*` 替代日期，例如：`{"logPath":"/share/log/nginx/site1.top-*.log"}`。
+> 注意：如果 Nginx 日志按天切割，可用 `*` 替代日期，例如：`{"logPath":"/share/logs/nginx/site1.top-*.log"}`。
 
 #### 压缩日志（.gz）
 支持直接解析 `.gz` 压缩日志，`logPath` 可指向单个 `.gz` 文件或使用通配符：
 ```json
-{"logPath": "/share/log/nginx/access-*.log.gz"}
+{"logPath": "/share/logs/nginx/access-*.log.gz"}
 ```
 项目内提供 gzip 参考样例：`var/log/gz-log-read-test/`。
 

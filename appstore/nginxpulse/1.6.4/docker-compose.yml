@@ -16,6 +16,7 @@ services:
       - ./data/pgdata:/app/var/pgdata
       - ./data/configs:/app/configs
       - /etc/localtime:/etc/localtime:ro
+    stop_grace_period: 90s
     networks:
       - 1panel-network
     labels:

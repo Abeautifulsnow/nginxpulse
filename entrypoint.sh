@@ -11,6 +11,8 @@ POSTGRES_DB="${POSTGRES_DB:-nginxpulse}"
 POSTGRES_PORT="${POSTGRES_PORT:-5432}"
 POSTGRES_LISTEN="${POSTGRES_LISTEN:-127.0.0.1}"
 POSTGRES_CONNECT_HOST="${POSTGRES_CONNECT_HOST:-127.0.0.1}"
+POSTGRES_STARTUP_TIMEOUT="${POSTGRES_STARTUP_TIMEOUT:-120}"
+POSTGRES_STOP_TIMEOUT="${POSTGRES_STOP_TIMEOUT:-60}"
 
 APP_UID="${PUID:-}"
 APP_GID="${PGID:-}"
@@ -52,6 +54,22 @@ is_truthy() {
   esac
   return 1
 }
+
+coerce_positive_int() {
+  local value="$1"
+  local fallback="$2"
+  case "$value" in
+    ''|*[!0-9]*|0)
+      printf '%s' "$fallback"
+      ;;
+    *)
+      printf '%s' "$value"
+      ;;
+  esac
+}
+
+POSTGRES_STARTUP_TIMEOUT="$(coerce_positive_int "$POSTGRES_STARTUP_TIMEOUT" 120)"
+POSTGRES_STOP_TIMEOUT="$(coerce_positive_int "$POSTGRES_STOP_TIMEOUT" 60)"
 
 has_env_config_source() {
   [ -n "${CONFIG_JSON:-}" ] || [ -n "${WEBSITES:-}" ]
@@ -433,11 +451,16 @@ start_postgres() {
     -c listen_addresses="$POSTGRES_LISTEN" &
   pg_pid=$!
 
-  for _ in 1 2 3 4 5 6 7 8 9 10; do
+  waited=0
+  while [ "$waited" -lt "$POSTGRES_STARTUP_TIMEOUT" ]; do
     if su-exec "$APP_USER:$APP_GROUP" pg_isready -h "$POSTGRES_CONNECT_HOST" -p "$POSTGRES_PORT" >/dev/null 2>&1; then
       return 0
     fi
-    sleep 0.5
+    if ! kill -0 "$pg_pid" >/dev/null 2>&1; then
+      return 1
+    fi
+    sleep 1
+    waited=$((waited + 1))
   done
   return 1
 }
@@ -458,7 +481,7 @@ fi
 if [ "$USE_EMBEDDED_PG" = "1" ]; then
   init_postgres
   if ! start_postgres; then
-    echo "nginxpulse: postgres did not become ready" >&2
+    echo "nginxpulse: postgres did not become ready within ${POSTGRES_STARTUP_TIMEOUT}s" >&2
     exit 1
   fi
   ensure_database
@@ -473,35 +496,67 @@ if command -v nginx >/dev/null 2>&1; then
   backend_pid=$!
   nginx -g 'daemon off;' &
   nginx_pid=$!
+  shutting_down=0
 
-  shutdown() {
-    if [ -n "${pg_pid:-}" ]; then
-      kill -TERM "$pg_pid" >/dev/null 2>&1 || true
-    fi
-    if [ -n "${backend_pid:-}" ]; then
-      kill -TERM "$backend_pid" >/dev/null 2>&1 || true
-    fi
-    if [ -n "${nginx_pid:-}" ]; then
-      kill -TERM "$nginx_pid" >/dev/null 2>&1 || true
+  stop_process() {
+    local pid="$1"
+    if [ -n "$pid" ] && kill -0 "$pid" >/dev/null 2>&1; then
+      kill -TERM "$pid" >/dev/null 2>&1 || true
     fi
   }
 
-  trap shutdown INT TERM
+  wait_process() {
+    local pid="$1"
+    if [ -n "$pid" ]; then
+      wait "$pid" >/dev/null 2>&1 || true
+    fi
+  }
+
+  stop_embedded_postgres() {
+    if [ "$USE_EMBEDDED_PG" != "1" ]; then
+      return 0
+    fi
+    if [ -s "$PGDATA/postmaster.pid" ] && command -v pg_ctl >/dev/null 2>&1; then
+      su-exec "$APP_USER:$APP_GROUP" pg_ctl -D "$PGDATA" -m fast -w -t "$POSTGRES_STOP_TIMEOUT" stop >/dev/null 2>&1 || true
+    fi
+    if [ -n "${pg_pid:-}" ] && kill -0 "$pg_pid" >/dev/null 2>&1; then
+      kill -TERM "$pg_pid" >/dev/null 2>&1 || true
+    fi
+  }
+
+  shutdown() {
+    if [ "$shutting_down" -eq 1 ]; then
+      return 0
+    fi
+    shutting_down=1
+
+    stop_process "${backend_pid:-}"
+    stop_process "${nginx_pid:-}"
+    stop_embedded_postgres
+
+    wait_process "${backend_pid:-}"
+    wait_process "${nginx_pid:-}"
+    wait_process "${pg_pid:-}"
+  }
+
+  handle_signal() {
+    shutdown
+    exit 0
+  }
+
+  trap handle_signal INT TERM
 
   while :; do
     if [ -n "${pg_pid:-}" ] && ! kill -0 "$pg_pid" >/dev/null 2>&1; then
       shutdown
-      wait "$pg_pid" >/dev/null 2>&1 || true
       exit 1
     fi
     if [ -n "${backend_pid:-}" ] && ! kill -0 "$backend_pid" >/dev/null 2>&1; then
       shutdown
-      wait "$backend_pid" >/dev/null 2>&1 || true
       exit 1
     fi
     if [ -n "${nginx_pid:-}" ] && ! kill -0 "$nginx_pid" >/dev/null 2>&1; then
       shutdown
-      wait "$nginx_pid" >/dev/null 2>&1 || true
       exit 1
     fi
     sleep 1

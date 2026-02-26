@@ -1,7 +1,7 @@
 # 部署方式
 
 ## 版本要求
-- 版本 > 1.5.3 必须部署 PostgreSQL，SQLite 已弃用。
+- 版本 > 1.5.3 单体部署时，必须搭建好 PostgreSQL，SQLite 已弃用。
 
 ## Docker 单容器（内置 PostgreSQL）
 镜像内已集成 PostgreSQL，推荐此方式。
@@ -15,23 +15,11 @@ docker run -d --name nginxpulse \
   -v ./docker_local/logs:/share/logs:ro \
   -v ./docker_local/nginxpulse_data:/app/var/nginxpulse_data \
   -v ./docker_local/pgdata:/app/var/pgdata \
+  -v ./docker_local/configs:/app/configs \
   -v /etc/localtime:/etc/localtime:ro \
   magiccoders/nginxpulse:latest
 ```
-
-示例（需挂载日志与数据目录）：
-```bash
-docker run -d --name nginxpulse \
-  -p 8088:8088 -p 8089:8089 \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e WEBSITES='[{"name":"主站","logPath":"/share/log/nginx/access.log","domains":["example.com"]}]' \
-  -v /path/to/nginx/access.log:/share/log/nginx/access.log:ro \
-  -v /path/to/nginxpulse_data:/app/var/nginxpulse_data \
-  -v /path/to/pgdata:/app/var/pgdata \
-  -v /etc/localtime:/etc/localtime:ro \
-  nginxpulse:latest
-```
+> PUID/PGID 需要替换为你本机所对应的正确值，此处的作用是用于应对目录权限不一致时引发的应用无法读取日志的情况。具体请移步下方的**Docker 部署权限说明**)
 
 常用环境变量（容器内置 PG）：
 - `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB`: PG 账号与库名
@@ -46,9 +34,9 @@ docker run -d --name nginxpulse \
 
 ## Docker Compose
 仓库根目录已提供 `docker-compose.yml`，可直接复制修改：
-- 调整 `WEBSITES` 与日志挂载路径。
+- 调整日志挂载路径。
 - 若日志或数据目录权限不一致，可配置 `PUID/PGID` 对齐宿主机 UID/GID。
-- 挂载 `nginxpulse_data` 保持数据持久化；如使用内置 PG 再挂载 `pgdata`。
+- 挂载 `nginxpulse_data`、`configs` 保持数据持久化；如使用内置 PG 再挂载 `pgdata`。
 - 保持 `/etc/localtime` 只读挂载，以确保时区一致。
 - SELinux 系统（RHEL/CentOS/Fedora）可在 volume 后追加 `:z` 或 `:Z` 重新打标签。
 
@@ -160,3 +148,6 @@ docker run ... \
 本项目使用系统时区进行日志解析与统计，请确保运行环境时区正确。
 - Docker: 挂载 `/etc/localtime:/etc/localtime:ro`
 - 裸机: 确保系统时区已配置（例如 `timedatectl set-timezone Asia/Shanghai`）
+
+## UI配置化
+本文档列举的所有配置，均可在[系统配置](https://nginx-pulse.kaisir.cn/settings)中进行可视化设置。

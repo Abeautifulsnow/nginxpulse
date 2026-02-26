@@ -1,0 +1,398 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+:root {
+  --color-fd-background: hsl(220, 24%, 97%);
+  --color-fd-foreground: hsl(222, 47%, 11%);
+  --color-fd-muted: hsl(220, 22%, 95%);
+  --color-fd-muted-foreground: hsl(220, 11%, 42%);
+  --color-fd-popover: hsl(0, 0%, 100%);
+  --color-fd-popover-foreground: hsl(222, 47%, 11%);
+  --color-fd-card: hsl(0, 0%, 100%);
+  --color-fd-card-foreground: hsl(222, 47%, 11%);
+  --color-fd-border: hsla(220, 18%, 75%, 0.45);
+  --color-fd-primary: hsl(217, 100%, 56%);
+  --color-fd-primary-foreground: hsl(0, 0%, 100%);
+  --color-fd-secondary: hsl(220, 20%, 93%);
+  --color-fd-secondary-foreground: hsl(222, 47%, 11%);
+  --color-fd-accent: hsla(217, 100%, 56%, 0.12);
+  --color-fd-accent-foreground: hsl(222, 47%, 11%);
+  --color-fd-ring: hsl(217, 100%, 56%);
+}
+
+.dark {
+  --color-fd-background: hsl(220, 30%, 8%);
+  --color-fd-foreground: hsl(210, 40%, 96%);
+  --color-fd-muted: hsl(221, 28%, 13%);
+  --color-fd-muted-foreground: hsla(215, 20%, 72%, 0.9);
+  --color-fd-popover: hsl(221, 30%, 10%);
+  --color-fd-popover-foreground: hsl(210, 40%, 96%);
+  --color-fd-card: hsl(221, 30%, 10%);
+  --color-fd-card-foreground: hsl(210, 40%, 96%);
+  --color-fd-border: hsla(219, 24%, 34%, 0.4);
+  --color-fd-primary: hsl(212, 100%, 69%);
+  --color-fd-primary-foreground: hsl(222, 47%, 11%);
+  --color-fd-secondary: hsl(221, 24%, 16%);
+  --color-fd-secondary-foreground: hsl(210, 40%, 96%);
+  --color-fd-accent: hsla(212, 100%, 69%, 0.18);
+  --color-fd-accent-foreground: hsl(210, 40%, 96%);
+  --color-fd-ring: hsl(212, 100%, 69%);
+}
+
+html,
+body {
+  font-family: var(--font-sora), var(--font-noto-sans-sc), system-ui, sans-serif;
+}
+
+.np-global-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--color-fd-background);
+  overflow: hidden;
+}
+
+.np-global-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 8% -12%, color-mix(in oklab, var(--color-fd-primary) 28%, transparent), transparent 44%),
+    radial-gradient(circle at 92% 88%, color-mix(in oklab, var(--color-fd-primary) 12%, transparent), transparent 36%),
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-fd-primary) 16%, var(--color-fd-background)) 0%,
+      color-mix(in oklab, var(--color-fd-primary) 10%, var(--color-fd-background)) 18%,
+      color-mix(in oklab, var(--color-fd-primary) 4%, var(--color-fd-background)) 36%,
+      var(--color-fd-background) 42%
+    );
+  opacity: 0.64;
+}
+
+.np-global-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-fd-border) 46%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-fd-border) 46%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.16;
+}
+
+.dark .np-global-bg::before {
+  opacity: 0.5;
+}
+
+.dark .np-global-bg::after {
+  opacity: 0.12;
+}
+
+/* Home layout: transparent at top, frosted only after scroll (>10px) */
+#nd-home-layout #nd-nav {
+  top: 0;
+  height: 4rem;
+  padding-inline: 0;
+}
+
+#nd-home-layout #nd-nav nav {
+  height: 4rem;
+}
+
+#nd-home-layout #nd-nav > div {
+  position: relative;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    backdrop-filter 220ms ease,
+    -webkit-backdrop-filter 220ms ease;
+}
+
+#nd-home-layout #nd-nav > div[class*='bg-fd-background/80'] {
+  background: color-mix(in oklab, var(--color-fd-background) 74%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--color-fd-border) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.08);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  box-shadow: 0 10px 24px -22px color-mix(in oklab, var(--color-fd-primary) 30%, transparent);
+}
+
+#nd-home-layout #nd-nav > div::after {
+  display: none;
+}
+
+.dark #nd-home-layout #nd-nav > div[class*='bg-fd-background/80'] {
+  background: color-mix(in oklab, var(--color-fd-background) 78%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--color-fd-border) 64%, transparent);
+  box-shadow: 0 12px 24px -20px color-mix(in oklab, var(--color-fd-primary) 36%, transparent);
+}
+
+/* Docs layout: make left sidebar blend with global gradient background */
+#nd-docs-layout #nd-sidebar {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-fd-primary) 8%, var(--color-fd-background)) 0%,
+      color-mix(in oklab, var(--color-fd-primary) 3%, var(--color-fd-background)) 44%,
+      color-mix(in oklab, var(--color-fd-background) 94%, white) 100%
+    );
+  border-color: color-mix(in oklab, var(--color-fd-border) 74%, transparent);
+  backdrop-filter: blur(10px) saturate(1.08);
+  box-shadow:
+    inset -1px 0 0 color-mix(in oklab, var(--color-fd-border) 72%, transparent),
+    8px 0 24px -22px color-mix(in oklab, var(--color-fd-primary) 28%, transparent);
+}
+
+.dark #nd-docs-layout #nd-sidebar {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-fd-primary) 16%, var(--color-fd-background)) 0%,
+      color-mix(in oklab, var(--color-fd-primary) 8%, var(--color-fd-background)) 42%,
+      color-mix(in oklab, var(--color-fd-background) 94%, black) 100%
+    );
+  box-shadow:
+    inset -1px 0 0 color-mix(in oklab, var(--color-fd-border) 62%, transparent),
+    8px 0 24px -22px color-mix(in oklab, var(--color-fd-primary) 38%, transparent);
+}
+
+/* Docs layout: keep content/toc flat so global grid background stays visible */
+#nd-docs-layout #nd-page[data-full='false'] {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+#nd-docs-layout #nd-toc {
+  background: transparent;
+  border-radius: 0 !important;
+}
+
+#nd-docs-layout #nd-toc > h3,
+#nd-docs-layout #nd-toc > div {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+#nd-docs-layout #nd-toc > h3 {
+  margin: 0;
+  padding: 0.75rem 0.85rem 0.5rem;
+  border-radius: 0;
+}
+
+#nd-docs-layout #nd-toc > div {
+  padding-inline: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-radius: 0;
+}
+
+#nd-docs-layout #nd-toc .border-s {
+  border-color: transparent;
+}
+
+@keyframes np-home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.np-home-reveal {
+  animation: np-home-fade-up 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.np-home-delay-1 {
+  animation-delay: 80ms;
+}
+
+.np-home-delay-2 {
+  animation-delay: 140ms;
+}
+
+.np-home-delay-3 {
+  animation-delay: 200ms;
+}
+
+.np-home-card {
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    background-color 240ms ease,
+    color 240ms ease;
+}
+
+.np-home-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--color-fd-primary) 35%, var(--color-fd-border));
+  box-shadow: 0 14px 34px -24px color-mix(in oklab, var(--color-fd-primary) 42%, transparent);
+}
+
+.np-home-action-btn {
+  gap: 0.6rem;
+  min-height: 2.75rem;
+}
+
+.np-home-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  column-gap: 1rem;
+  row-gap: 0.875rem;
+}
+
+.np-home-action-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1;
+}
+
+.np-home-action-label,
+.np-home-shortcut-label {
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.np-home-action-icon {
+  flex-shrink: 0;
+  transition:
+    transform 220ms ease,
+    color 220ms ease;
+}
+
+.np-home-action-arrow {
+  margin-left: 0.05rem;
+  opacity: 0.74;
+  transform: translateX(0);
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
+}
+
+.np-home-action-btn:hover .np-home-action-icon {
+  transform: translateY(-1px);
+}
+
+.np-home-action-btn:hover .np-home-action-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+@keyframes np-home-arrow-intro {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.78;
+  }
+  35% {
+    transform: translateX(6px);
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(2px);
+    opacity: 0.95;
+  }
+}
+
+.np-home-action-arrow-intro {
+  animation: np-home-arrow-intro 1200ms cubic-bezier(0.2, 0.75, 0.24, 1) 320ms 2;
+}
+
+.np-home-shortcut {
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  justify-content: flex-start;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+.np-home-shortcut .np-home-kbd {
+  margin-left: 0.15rem;
+}
+
+.np-home-shortcut:hover {
+  border-color: color-mix(in oklab, var(--color-fd-primary) 34%, var(--color-fd-border));
+  box-shadow: 0 10px 24px -24px color-mix(in oklab, var(--color-fd-primary) 46%, transparent);
+}
+
+.np-home-shortcut-icon {
+  transition: transform 240ms ease;
+}
+
+.np-home-shortcut:hover .np-home-shortcut-icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+@keyframes np-home-kbd-breathe {
+  0%,
+  100% {
+    border-color: color-mix(in oklab, var(--color-fd-border) 80%, transparent);
+    box-shadow: none;
+  }
+  50% {
+    border-color: color-mix(in oklab, var(--color-fd-primary) 48%, var(--color-fd-border));
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-fd-primary) 12%, transparent);
+  }
+}
+
+.np-home-kbd {
+  animation: np-home-kbd-breathe 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-home-reveal {
+    animation: none;
+  }
+
+  .np-home-card {
+    transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+  }
+
+  .np-home-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .np-home-action-icon,
+  .np-home-action-arrow,
+  .np-home-shortcut-icon {
+    transition: none;
+  }
+
+  .np-home-action-btn:hover .np-home-action-icon,
+  .np-home-action-btn:hover .np-home-action-arrow,
+  .np-home-shortcut:hover .np-home-shortcut-icon {
+    transform: none;
+  }
+
+  .np-home-action-arrow-intro {
+    animation: none;
+  }
+
+  .np-home-kbd {
+    animation: none;
+  }
+}

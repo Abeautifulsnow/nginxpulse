@@ -1,0 +1,23 @@
+{
+  "title": "NginxPulse Docs",
+  "pages": [
+    "Home",
+    "Quick-Start",
+    "Deployment",
+    "Migration-SQLite-to-Postgres",
+    "Configuration",
+    "Log-Parsing",
+    "IP-Geo",
+    "Database-Schema",
+    "FAQ",
+    "Home-EN",
+    "Quick-Start-EN",
+    "Deployment-EN",
+    "Migration-SQLite-to-Postgres-EN",
+    "Configuration-EN",
+    "Log-Parsing-EN",
+    "IP-Geo-EN",
+    "Database-Schema-EN",
+    "FAQ-EN"
+  ]
+}

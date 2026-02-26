@@ -95,12 +95,15 @@ services:
       - ./docker_local/nginxpulse_data:/app/var/nginxpulse_data
       - ./docker_local/pgdata:/app/var/pgdata
       - /etc/localtime:/etc/localtime
+    stop_grace_period: 90s
     restart: unless-stopped
 ```
 
 ```bash
 docker compose up -d
 ```
+
+> Keep `stop_grace_period` (for example `90s`) so embedded PostgreSQL has enough time to shut down cleanly on `docker compose stop`, reducing recovery/restart loops on next boot.
 
 ### Time Zone (Important)
 This project uses the **system time zone** for log parsing and statistics. Make sure the runtime time zone is correct.

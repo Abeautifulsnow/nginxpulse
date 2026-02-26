@@ -267,7 +267,7 @@ import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { fetchAppStatus } from '@/api';
 import { getLocaleFromQuery, getStoredLocale, normalizeLocale, setLocale } from '@/i18n';
-import { getWebBasePath } from '@/utils';
+import { getMobileBasePathWithSlash } from '@/utils';
 import {
   ACTION_SHEET_DURATION,
   HERO_ACCENT_ALPHA,
@@ -323,7 +323,7 @@ const ACCESS_KEY_EVENT = 'nginxpulse:access-key-required';
 const PWA_PROMPT_DISMISS_KEY = 'nginxpulse_pwa_prompt_dismissed_at';
 const PWA_PROMPT_THROTTLE_DAYS = 14;
 const TABBAR_OVERRIDE_STORAGE_KEY = 'nginxpulse_mobile_tabbar_bottom_override';
-const brandMarkSrc = `${getWebBasePath() || ''}/brand-mark.svg`;
+const brandMarkSrc = `${getMobileBasePathWithSlash()}brand-mark.svg`;
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;

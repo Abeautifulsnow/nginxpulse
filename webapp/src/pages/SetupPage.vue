@@ -842,6 +842,7 @@ const baseLogTypeOptions: LogTypeOption[] = [
   { value: 'traefik-ingress', label: 'Traefik Ingress' },
   { value: 'haproxy-ingress', label: 'HAProxy Ingress' },
   { value: 'nginx-proxy-manager', label: 'Nginx Proxy Manager' },
+  { value: 'safeline', label: 'SafeLine WAF' },
   { value: 'caddy', label: 'Caddy' },
 ];
 

@@ -1,7 +1,7 @@
 # Deployment
 
 ## Version requirement
-- Version > 1.5.3 requires PostgreSQL. SQLite is deprecated.
+- For versions > 1.5.3, single-binary deployment requires PostgreSQL. SQLite is deprecated.
 
 ## Docker single-container (built-in PostgreSQL)
 The image includes PostgreSQL. Recommended for most users.
@@ -15,23 +15,12 @@ docker run -d --name nginxpulse \
   -v ./docker_local/logs:/share/logs:ro \
   -v ./docker_local/nginxpulse_data:/app/var/nginxpulse_data \
   -v ./docker_local/pgdata:/app/var/pgdata \
+  -v ./docker_local/configs:/app/configs \
   -v /etc/localtime:/etc/localtime:ro \
   magiccoders/nginxpulse:latest
 ```
 
-Example:
-```bash
-docker run -d --name nginxpulse \
-  -p 8088:8088 -p 8089:8089 \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e WEBSITES='[{"name":"Main","logPath":"/share/log/nginx/access.log","domains":["example.com"]}]' \
-  -v /path/to/nginx/access.log:/share/log/nginx/access.log:ro \
-  -v /path/to/nginxpulse_data:/app/var/nginxpulse_data \
-  -v /path/to/pgdata:/app/var/pgdata \
-  -v /etc/localtime:/etc/localtime:ro \
-  nginxpulse:latest
-```
+> Replace `PUID/PGID` with the correct UID/GID on your host. This is used to prevent permission mismatch issues that can block log reads. See **Docker Deployment Permissions** below for details.
 
 Useful env vars (built-in PG):
 - `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB`
@@ -46,9 +35,9 @@ In this case the built-in PG will not start, `POSTGRES_*` is ignored, and you ca
 
 ## Docker Compose
 A `docker-compose.yml` is provided in the repo. Update:
-- `WEBSITES` and log volume
+- log mount paths
 - Configure `PUID/PGID` to align with host UID/GID if you hit permission issues.
-- `nginxpulse_data` volume; mount `pgdata` only when using built-in PG
+- mount `nginxpulse_data` and `configs` for persistence; mount `pgdata` only when using built-in PG
 - `/etc/localtime` mount for timezone
 - On SELinux hosts (RHEL/CentOS/Fedora), append `:z` or `:Z` to the volume options.
 
@@ -161,3 +150,6 @@ The image generates Nginx config and `/app-config.js` on startup. No frontend re
 The project uses system timezone for parsing.
 - Docker: mount `/etc/localtime:/etc/localtime:ro`
 - Bare metal: set system timezone and restart
+
+## UI configuration
+All configurations listed in this document can also be managed visually in [System Settings](https://nginx-pulse.kaisir.cn/settings).

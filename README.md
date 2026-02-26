@@ -96,12 +96,15 @@ services:
       - ./docker_local/pgdata:/app/var/pgdata
       - ./docker_local/configs:/app/configs
       - /etc/localtime:/etc/localtime
+    stop_grace_period: 90s
     restart: unless-stopped
 ```
 
 ```bash
 docker compose up -d
 ```
+
+> 建议保留 `stop_grace_period`（如 `90s`），让内置 PostgreSQL 在 `docker compose stop` 时有足够时间完成一致性关闭，避免下次启动进入恢复重试。
 
 ### 时区设置（重要）
 本项目使用**系统时区**进行日志时间解析与统计，请确保运行环境时区正确。

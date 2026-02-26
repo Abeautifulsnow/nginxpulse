@@ -100,8 +100,8 @@ https://example.com/m/?tabbarBottom=false
 - `logPath` (string, 必填): 日志路径，支持通配符 `*`。
   - 示例: `/var/log/nginx/access.log`
   - 示例: `/var/log/nginx/access_*.log`
-- `domains` (string[]): 站点域名列表。
-- `logType` (string): 日志类型，支持 `nginx`、`caddy`、`nginx-proxy-manager`（或 `npm`）、`apache`（或 `httpd`）、`iis`（或 `iis-w3c`）、`haproxy`、`traefik`、`envoy`、`tengine`、`nginx-ingress`（或 `ingress-nginx`）、`traefik-ingress`、`haproxy-ingress`，默认 `nginx`。
+- `domains` (string[]): 站点域名列表，该字段用于系统内的访问来源判断（是否为站内访问）
+- `logType` (string): 日志类型，支持 `nginx`、`caddy`、`nginx-proxy-manager`（或 `npm`）、`apache`（或 `httpd`）、`iis`（或 `iis-w3c`）、`haproxy`、`traefik`、`envoy`、`tengine`、`nginx-ingress`（或 `ingress-nginx`）、`traefik-ingress`、`haproxy-ingress`、`safeline`（雷池WAF，或 `safeline-waf`/`raywaf`/`ray-waf`/`leichi`/`leichi-waf`），默认 `nginx`。
 - `logFormat` (string): 自定义日志格式（带 `$变量`）。
 - `logRegex` (string): 自定义正则（需命名分组）。
 - `timeLayout` (string): 时间解析格式，留空走默认。

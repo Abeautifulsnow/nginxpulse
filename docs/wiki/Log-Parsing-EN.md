@@ -63,26 +63,26 @@ Sample line:
 Example:
 ```yaml
 environment:
-  WEBSITES: '[{"name":"Site 1","logPath":"/share/log/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"Site 2","logPath":"/share/log/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
+  WEBSITES: '[{"name":"Site 1","logPath":"/share/logs/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"Site 2","logPath":"/share/logs/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
 volumes:
-  - ./nginx_data/logs/site1/access.log:/share/log/nginx/access-site1.log:ro
-  - ./nginx_data/logs/site2/access.log:/share/log/nginx/access-site2.log:ro
+  - ./nginx_data/logs/site1/access.log:/share/logs/nginx/access-site1.log:ro
+  - ./nginx_data/logs/site2/access.log:/share/logs/nginx/access-site2.log:ro
 ```
 
 If you have many sites, consider **mounting the entire log directory** and specify exact files in `WEBSITES`:
 ```yaml
 environment:
-  WEBSITES: '[{"name":"Site 1","logPath":"/share/log/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"Site 2","logPath":"/share/log/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
+  WEBSITES: '[{"name":"Site 1","logPath":"/share/logs/nginx/access-site1.log","domains":["www.kaisir.cn","kaisir.cn"]}, {"name":"Site 2","logPath":"/share/logs/nginx/access-site2.log","domains":["home.kaisir.cn"]}]'
 volumes:
-  - ./nginx_data/logs:/share/log/nginx/
+  - ./nginx_data/logs:/share/logs/nginx/
 ```
 
-> Tip: If logs are rotated daily, use `*` to replace the date, e.g. `{"logPath":"/share/log/nginx/site1.top-*.log"}`.
+> Tip: If logs are rotated daily, use `*` to replace the date, e.g. `{"logPath":"/share/logs/nginx/site1.top-*.log"}`.
 
 #### Compressed logs (.gz)
 `.gz` logs are supported. `logPath` can point to a single `.gz` file or a glob:
 ```json
-{"logPath": "/share/log/nginx/access-*.log.gz"}
+{"logPath": "/share/logs/nginx/access-*.log.gz"}
 ```
 There is a gzip sample in `var/log/gz-log-read-test/`.
 

@@ -17,4 +17,5 @@ services:
       - ./docker_local/nginxpulse_data:/app/var/nginxpulse_data
       - ./docker_local/pgdata:/app/var/pgdata
       - /etc/localtime:/etc/localtime:ro
+    stop_grace_period: 90s
     restart: unless-stopped

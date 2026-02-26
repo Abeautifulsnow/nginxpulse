@@ -138,6 +138,9 @@ func newLogLineParser(website config.WebsiteConfig, sourceCfg *config.SourceConf
 			if strings.TrimSpace(timeLayout) == "" {
 				timeLayout = defaultIISTimeLayout
 			}
+		case "safeline", "safeline-waf", "raywaf", "ray-waf", "leichi", "leichi-waf":
+			pattern = defaultSafeLineWAFLogRegex
+			source = "safeline-waf"
 		default:
 			return nil, fmt.Errorf("不支持的日志类型: %s", logType)
 		}
